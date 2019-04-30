@@ -1,0 +1,73 @@
+<section class="s-content">
+  <div class="container">
+    <div class="table-wrap">
+      <table class="content-table">
+        <thead>
+          <tr>
+            <th class="id">
+              <a routerLink="/" [queryParams]="{sortBy: 'id', desc: sortBy.column == 'id' && !sortBy.desc ? 'true' : 'false', page: currentPage}">
+                Id 
+                <i *ngIf="sortBy.column != 'id'" class="fa fa-caret-double"></i>
+                <i *ngIf="sortBy.column == 'id' && !sortBy.desc" class="fa fa-caret-down"></i>
+                <i *ngIf="sortBy.column == 'id' && sortBy.desc" class="fa fa-caret-up"></i>
+              </a>
+            </th>
+            <th class="cash">
+              <a routerLink="/" [queryParams]="{sortBy: 'cash', desc: sortBy.column == 'cash' && !sortBy.desc ? 'true' : 'false', page: currentPage}">
+                Средства 
+                <i *ngIf="sortBy.column != 'cash'" class="fa fa-caret-double"></i>
+                <i *ngIf="sortBy.column == 'cash' && !sortBy.desc" class="fa fa-caret-down"></i>
+                <i *ngIf="sortBy.column == 'cash' && sortBy.desc" class="fa fa-caret-up"></i>
+              </a>
+            </th>
+            <th>Комментарий</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of accountingTable | accountingLinesPipe : sortBy.column : sortBy.desc : currentPage : pageSize">
+            <td><span class="popup-link" (click)="displayPopup(item.id)">{{item.id}}</span></td>
+            <td>{{item.cash.toFixed(2)}}</td>
+            <td>{{item.comment}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="buttons clearfix">
+      <div class="add">
+        <button (click)="displayPopup()" class="button">Добавить</button>
+      </div>
+      <div *ngIf="pages.length > 1" class="pagination">
+        <a *ngFor="let pageNum of pages"
+           routerLink="/" [queryParams]="{page: pageNum, sortBy: sortBy.column, desc: sortBy.desc}"
+           class="page" [class.active]="pageNum === currentPage">
+           {{pageNum}}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+<div *ngIf="showPopup" (click)="showPopup = !showPopup" class="popup">
+  <div (click)="stopE($event)" class="popup-content">
+    <h3 class="h3">Запись #{{popupId}}</h3>
+    <form [formGroup]="popupForm" (ngSubmit)="onSubmit()">
+      <div class="input" [class.error]="popupForm.controls.cash.errors && !popupForm.controls.cash.errors.required">
+        <input type="text" formControlName="cash" placeholder="Количество средств">
+        <div *ngIf="popupForm.controls.cash.errors && !popupForm.controls.cash.errors.required" class="error">
+          <span *ngIf="popupForm.controls.cash.errors.min">Значение меньше -1000</span>
+          <span *ngIf="popupForm.controls.cash.errors.max">Значение больше 1000</span>
+          <span *ngIf="popupForm.controls.cash.errors.pattern">Неверное значение</span>
+        </div>
+      </div>
+      <div class="input" [class.error]="popupForm.controls.comment.errors && !popupForm.controls.comment.errors.required">
+        <textarea formControlName="comment" placeholder="Комментарий" maxlength="512"></textarea>
+        <div *ngIf="popupForm.controls.comment.errors && !popupForm.controls.comment.errors.required" class="error">
+          <span *ngIf="popupForm.controls.comment.errors.pattern">Неверное значение</span>
+        </div>
+      </div>
+      <div class="buttons clearfix">
+        <button [disabled]="!popupForm.valid" type="sumbit" class="button">Сохранить</button>
+        <button (click)="showPopup = !showPopup" type="button" class="button cancel">Отменить</button>
+      </div>
+    </form>
+  </div>
+</div>
