@@ -7,10 +7,10 @@ import { AccountingLine } from '../models/accounting.model';
 export class AccountingLinesPipe implements PipeTransform {
 
   transform(lines: AccountingLine[],
-        sortBy: string,
-        desc: boolean,
-        pageNumber: number,
-        pageSize: number): AccountingLine[] {
+            sortBy: string,
+            desc: boolean,
+            pageNumber: number,
+            pageSize: number): AccountingLine[] {
 
     let result: AccountingLine[] = lines.sort((a: AccountingLine, b: AccountingLine): number => {
       if (a[sortBy] > b[sortBy]) {
